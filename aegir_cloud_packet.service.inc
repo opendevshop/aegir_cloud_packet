@@ -40,30 +40,22 @@ class hostingService_provider_packet extends hostingService_provider {
       $form['provider_options']['project'] = array(
         '#type' => 'select',
         '#title' => t('Project'),
-        '#options' => $options['project'],
+        '#options' => $options['projects'],
       );
       $form['provider_options']['facility'] = array(
         '#type' => 'select',
         '#title' => t('Facility'),
         '#options' => $options['facilities'],
       );
-      $form['provider_options']['operatingSystems'] = array(
+      $form['provider_options']['os'] = array(
         '#type' => 'select',
         '#title' => t('Operating System'),
-        '#options' => $options['operatingSystems'],
+        '#options' => $options['oses'],
       );
-      $form['provider_options']['processors'] = array(
+      $form['provider_options']['plan'] = array(
         '#type' => 'select',
-        '#title' => t('Processors'),
-        '#options' => $options['processors'],
-      );
-      $form['provider_options']['ssh_keys'] = array(
-        '#type' => 'checkboxes',
-        '#title' => t('SSH Keys'),
-        '#options' => variable_get('aegir_cloud_packet_ssh_keys_options', array()),
-        '#default_value' => array(
-          variable_get('aegir_cloud_public_key_packet_id', ''),
-        ),
+        '#title' => t('Type'),
+        '#options' => $options['plans'],
       );
     }
   }
