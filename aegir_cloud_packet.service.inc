@@ -82,14 +82,30 @@ class hostingService_provider_packet extends hostingService_provider {
       // We do this in the validation phase so that we can cause form errors if something goes wrong.
       else {
 
-        // @TODO: Add Packet API integration.
-        $provider_data = array();
-        $provider_server_id = 1;
+        // Create a device
+        $service_data = $form_state['values']['services']['provider']['packet']['provider_options'];
+
+        $device = new \PacketHost\Client\Domain\Device();
+        $device->hostname = $node->title;
+        $device->facility = $service_data['facility'];
+        $device->plan = $service_data['plan'];
+        $device->operatingSystem = $service_data['os'];
+
+
+        //Create a configuration object
+        $config = new PacketHost\Client\Adapter\Configuration\DefaultConfiguration(
+          variable_get('aegir_cloud_packet_api_key', '')
+        );
+
+        //Build the adapter and Api
+        $adapter = new PacketHost\Client\Adapter\GuzzleAdapter($config);
+        $api = new PacketHost\Client\PacketApi($adapter);
+
+        $provider_data = $api->device()->create($service_data['project'], $device);
 
         form_set_value($form['services']['provider']['packet']['provider_data'], $provider_data, $form_state);
-        form_set_value($form['services']['provider']['packet']['provider_server_identifier'], $provider_server_id, $form_state);
+        form_set_value($form['services']['provider']['packet']['provider_server_identifier'], $provider_data->id, $form_state);
       }
-
     } catch (Exception $e) {
       form_set_error('provider_options', $e->getMessage());
     }
