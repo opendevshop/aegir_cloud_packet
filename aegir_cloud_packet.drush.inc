@@ -32,10 +32,8 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
 
                         // Save IP addresses
                         foreach ($device->ipAddresses as $ip) {
-                            if ($ip->address_family == 4) {
-                                drush_log('IP address loaded from API: ' . $ip->address, 'devshop_ok');
-                                $task->ref->new_ip_addresses[] = $ip->address;
-                            }
+                            drush_log('IP address loaded from API: ' . $ip->address, 'devshop_ok');
+                            $task->ref->new_ip_addresses[] = $ip->address;
                         }
                         $task->ref->no_verify = TRUE;
                         if (!node_save($task->ref)) {
