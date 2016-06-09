@@ -55,6 +55,9 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
             while (!$completed) {
                 sleep(3);
                 $device = $service->getApi()->device()->get($service->provider_options['project'], $service->provider_server_identifier);
+                if (empty($device)) {
+                    return drush_set_error('AEGIR_CLOUD_ERROR', dt('Unable to load device information.'));
+                }
 
                 // Log if the percentage changed.
                 if ($last_percentage != $device->percentageComplete) {
