@@ -209,7 +209,7 @@ function aegir_cloud_packet_refresh_options() {
     variable_set('aegir_cloud_packet_options', $options);
 //    variable_set('aegir_cloud_packet_ssh_keys_options', $ssh_key_options);
 //
-    dsm($options);
+//    dsm($options);
     drupal_set_message(t('Packet.net options have been retrieved.'));
 
   } catch (Exception $e) {
