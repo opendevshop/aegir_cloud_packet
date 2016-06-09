@@ -70,7 +70,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     }
                 }
 
-                if ($device->provisioningPercentage == 100) {
+                if ((int) $device->provisioningPercentage == 100) {
                     drush_log('All events completed.', 'devshop_ok');
                     $completed = TRUE;
                 }
