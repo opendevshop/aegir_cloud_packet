@@ -63,13 +63,14 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                 // Log if the percentage changed.
                 if ($last_percentage != $device->percentageComplete) {
                   drush_log('Server Provisioning ' . (int) $device->percentageComplete . '% complete', 'devshop_info');
+                    $last_percentage = $device->percentageComplete;
                 }
 
                 // Log if an event completed.
                 if (isset($device->provisioningEvents )) {
                     foreach ($device->provisioningEvents as $event) {
                         if (!empty($event->id) && empty($completed_events[$event->type])) {
-                            drush_log('Event Completed: ' . $event->body, 'devshop_info');
+                            drush_log('Event Completed: ' . $event->body . "\n", 'devshop_info');
                             $completed_events[$event->type] = $event;
                             break;
                         }
