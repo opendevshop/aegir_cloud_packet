@@ -63,8 +63,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                 if (isset($device->provisioningEvents )) {
                     foreach ($device->provisioningEvents as $event) {
                         if (!empty($event->id) && empty($completed_events[$event->type])) {
-                            drush_log('Event Completed: ' . $event->body . "\n", 'devshop_info');
-                            drush_log($device->provisioningPercentage . "% complete. \n", 'devshop_info');
+                            drush_log($event->body ." " . $device->provisioningPercentage . "% Complete \n", 'devshop_info');
                             $completed_events[$event->type] = $event;
                             break;
                         }
