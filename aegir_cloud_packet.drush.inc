@@ -70,12 +70,11 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     }
                 }
 
-                if ((int) $device->provisioningPercentage == 100) {
-                    drush_log('All events completed.', 'devshop_ok');
-                    $completed = TRUE;
+                // When device is active, Stop holding up verification process.
+                if ($device->state == 'active') {
+                    drush_log('All events completed!', 'devshop_ok');
+                    return;
                 }
-                drush_log('device is ' . $device->state . "\n", 'devshop_info');
-
             }
 
 
