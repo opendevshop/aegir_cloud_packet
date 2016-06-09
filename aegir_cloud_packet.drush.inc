@@ -8,7 +8,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
 
     $task =& drush_get_context('HOSTING_TASK');
 
-    if ($task->ref->type == 'server' && isset($task->ref->services['provider']) && $task->ref->services['provider']->type == 'packet') {
+    if ($task->task_type == 'verify' && $task->ref->type == 'server' && isset($task->ref->services['provider']) && $task->ref->services['provider']->type == 'packet') {
 
         // Lookup and save IP addresses.
         try {
