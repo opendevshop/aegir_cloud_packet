@@ -63,6 +63,7 @@ function aegir_cloud_packet_form_aegir_cloud_settings_form_alter(&$form, &$form_
       $key_vars['key'] = (object) sshkey_parse(variable_get('aegir_public_key', ''));
 
       $fingerprint = theme_sshkey_fingerprint($key_vars);
+      dsm($keys);
       foreach ($keys as $key) {
         if ($fingerprint == $key->fingerprint) {
           $key_found = TRUE;
@@ -217,7 +218,6 @@ function aegir_cloud_packet_refresh_options() {
 
   // Fetch SSH keys
   $ssh_keys = $api->sshKey()->getAll();
-  variable_set('aegir_cloud_packet_ssh_keys', $ssh_keys);
 
   // Get fingerprint of aegir ssh key for comparison.
   try {
@@ -229,8 +229,14 @@ function aegir_cloud_packet_refresh_options() {
         variable_set('aegir_cloud_public_key_packet_id', $key->id);
       }
 
+      $ssh_key_objects[] = (object) [
+        'id' => $key->id,
+        'fingerprint' => $key->fingerprint,
+        'label' => $key->label,
+      ];
       $ssh_key_options[$key->id] = $key->label;
     }
+    variable_set('aegir_cloud_packet_ssh_keys', $ssh_key_objects);
   }
   catch (SSHKeyParseException $e) {
     $key_found = FALSE;
