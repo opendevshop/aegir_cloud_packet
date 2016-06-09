@@ -36,11 +36,12 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                             $task->ref->new_ip_addresses[] = $ip->address;
                         }
                         $task->ref->no_verify = TRUE;
-                        if (!node_save($task->ref)) {
+                        node_save($task->ref);
+
+                        // reload the node to check that IPs were saved.
+                        $server = node_load($task->ref->nid);
+                        if (empty($task->ref->ip_addresses)) {
                             return drush_set_error('AEGIR_CLOUD_ERROR', 'IP addresses were not saved!');
-                        }
-                        else {
-                            drush_log('IP address from node: ' . implode(', ', $task->ref->ip_addresses), 'devshop_ok');
                         }
                         break;
                     }
