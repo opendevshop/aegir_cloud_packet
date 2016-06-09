@@ -91,17 +91,7 @@ class hostingService_provider_packet extends hostingService_provider {
         $device->plan = $service_data['plan'];
         $device->operatingSystem = $service_data['os'];
 
-
-        //Create a configuration object
-        $config = new PacketHost\Client\Adapter\Configuration\DefaultConfiguration(
-          variable_get('aegir_cloud_packet_api_key', '')
-        );
-
-        //Build the adapter and Api
-        $adapter = new PacketHost\Client\Adapter\GuzzleAdapter($config);
-        $api = new PacketHost\Client\PacketApi($adapter);
-
-        $provider_data = $api->device()->create($service_data['project'], $device);
+        $provider_data = $this->getApi()->device()->create($service_data['project'], $device);
 
         form_set_value($form['services']['provider']['packet']['provider_data'], $provider_data, $form_state);
         form_set_value($form['services']['provider']['packet']['provider_server_identifier'], $provider_data->id, $form_state);
@@ -163,8 +153,25 @@ class hostingService_provider_packet extends hostingService_provider {
   public function destroy() {
     try {
 
+
+//      $provider_data = $api->device()->delete($this->server->);
     } catch(Exception $e) {
       form_set_error('provider', $e->getMessage());
     }
+  }
+
+  /**
+   * Returns an active PacketAPI object
+   *
+   * @return \PacketHost\Client\PacketApi
+   */
+  function getApi() {
+    $config = new PacketHost\Client\Adapter\Configuration\DefaultConfiguration(
+      variable_get('aegir_cloud_packet_api_key', '')
+    );
+    $adapter = new PacketHost\Client\Adapter\GuzzleAdapter($config);
+    $api = new PacketHost\Client\PacketApi($adapter);
+
+    return $api;
   }
 }
