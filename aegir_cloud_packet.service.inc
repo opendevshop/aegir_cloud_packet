@@ -152,11 +152,10 @@ class hostingService_provider_packet extends hostingService_provider {
    */
   public function destroy() {
     try {
-
-
-//      $provider_data = $api->device()->delete($this->server->);
+      $this->getApi()->device()->delete($this->provider_options['project'], $this->provider_server_identifier);
+      drupal_set_message(t('The Packet.net server was destroyed.'));
     } catch(Exception $e) {
-      form_set_error('provider', $e->getMessage());
+      form_set_error('provider', 'API Error: ' . $e->getMessage());
     }
   }
 
