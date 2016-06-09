@@ -51,7 +51,6 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
             // Loop until we have completed all provisioning steps.
             drush_log('Waiting for Server', 'devshop_command');
             $completed = FALSE;
-            $last_percentage = 0;
             $completed_events = [];
             while (!$completed) {
                 sleep(3);
@@ -60,18 +59,12 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     return drush_set_error('AEGIR_CLOUD_ERROR', dt('Unable to load device information.'));
                 }
 
-                // Log if the percentage changed.
-                if ($last_percentage != $device->percentageComplete) {
-                  drush_log('Server Provisioning ' . (int) $device->percentageComplete . '% complete', 'devshop_info');
-                    $last_percentage = $device->percentageComplete;
-                }
-
                 // Log if an event completed.
                 if (isset($device->provisioningEvents )) {
                     foreach ($device->provisioningEvents as $event) {
                         if (!empty($event->id) && empty($completed_events[$event->type])) {
                             drush_log('Event Completed: ' . $event->body . "\n", 'devshop_info');
-                            drush_log($device->percentageComplete . "% complete. \n", 'devshop_info');
+                            drush_log($device->provisioningPercentage . "% complete. \n", 'devshop_info');
                             $completed_events[$event->type] = $event;
                             break;
                         }
