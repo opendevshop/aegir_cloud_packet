@@ -40,7 +40,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     else {
                         drush_log('IP address from node: ' . implode(', ', $task->ref->ip_addresses), 'devshop_ok');
                     }
-                    return;
+                    break;
                 }
             }
             }
