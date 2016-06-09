@@ -71,7 +71,7 @@ function aegir_cloud_packet_form_aegir_cloud_settings_form_alter(&$form, &$form_
             '#suffix' => '</div>',
             '#markup' => t('!link key was found in your !link2. Ready to Provision.', array(
             '!link' => l(t('Hostmaster public key'), 'admin/hosting/cloud'),
-            '!link2' => l(t('packet Account'), 'https://control.packet.com/devices/sshkeys'),
+            '!link2' => l(t('Packet Account'), 'https://app.packet.net/portal#/ssh-keys'),
           )));
         }
       }
@@ -86,7 +86,7 @@ function aegir_cloud_packet_form_aegir_cloud_settings_form_alter(&$form, &$form_
         '#suffix' => '</div>',
         '#markup' => t('!link1 was not found in your packet Account.  !link2', array(
           '!link1' => l(t('Hostmaster public key'), 'admin/hosting/cloud'),
-          '!link2' => l(t('Add your public key to packet'), 'https://control.packet.com/devices/sshkeys'),
+          '!link2' => l(t('Add your public key to packet'), 'https://app.packet.net/portal#/ssh-keys'),
         )),
       );
     }
@@ -161,7 +161,6 @@ function aegir_cloud_packet_refresh_options() {
     $projects = $api->project()->getAll();
     foreach ($projects as $project) {
       $options['projects'][$project->id] = $project->name;
-      // @TODO: Get SSH Keys from projects?
     }
 
     // Fetching facilities
@@ -214,5 +213,26 @@ function aegir_cloud_packet_refresh_options() {
 
   } catch (Exception $e) {
     drupal_set_message($e->getMessage(), 'error');
+  }
+
+  // Fetch SSH keys
+  $ssh_keys = $api->sshKey()->getAll();
+  variable_set('aegir_cloud_packet_ssh_keys', $ssh_keys);
+
+  // Get fingerprint of aegir ssh key for comparison.
+  try {
+    $key_vars['key'] = (object) sshkey_parse(variable_get('aegir_public_key', ''));
+
+    $aegir_sshkey_fingerprint = theme_sshkey_fingerprint($key_vars);
+    foreach ($ssh_keys as $key) {
+      if ($aegir_sshkey_fingerprint == $key->fingerprint) {
+        variable_set('aegir_cloud_public_key_packet_id', $key->id);
+      }
+
+      $ssh_key_options[$key->id] = $key->label;
+    }
+  }
+  catch (SSHKeyParseException $e) {
+    $key_found = FALSE;
   }
 }
