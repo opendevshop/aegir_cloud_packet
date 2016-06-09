@@ -74,6 +74,8 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     drush_log('All events completed.', 'devshop_ok');
                     $completed = TRUE;
                 }
+                drush_log('device is ' . $device->state . "\n", 'devshop_info');
+
             }
 
 
