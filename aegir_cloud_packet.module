@@ -237,6 +237,7 @@ function aegir_cloud_packet_refresh_options() {
       $ssh_key_options[$key->id] = $key->label;
     }
     variable_set('aegir_cloud_packet_ssh_keys', $ssh_key_objects);
+    variable_set('aegir_cloud_packet_ssh_keys_options', $ssh_key_options);
   }
   catch (SSHKeyParseException $e) {
     $key_found = FALSE;

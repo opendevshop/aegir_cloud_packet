@@ -56,6 +56,14 @@ class hostingService_provider_packet extends hostingService_provider {
         '#title' => t('Type'),
         '#options' => $options['plans'],
       );
+      $form['provider_options']['ssh_keys'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('SSH Keys'),
+        '#options' => variable_get('aegir_cloud_packet_ssh_keys_options', array()),
+        '#default_value' => array(
+          variable_get('aegir_cloud_public_key_packet_id', ''),
+        ),
+      );
     }
   }
 
