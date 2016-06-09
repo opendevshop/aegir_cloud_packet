@@ -32,7 +32,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
 
                         // Save IP addresses
                         foreach ($device->ipAddresses as $ip) {
-                            drush_log('IP address loaded from API: ' . $ip->address, 'devshop_ok');
+                            drush_log('IP address found: ' . $ip->address . "\n", 'devshop_ok');
                             $task->ref->new_ip_addresses[] = $ip->address;
                         }
                         $task->ref->no_verify = TRUE;
@@ -63,14 +63,14 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                 if (isset($device->provisioningEvents )) {
                     foreach ($device->provisioningEvents as $event) {
                         if (!empty($event->id) && empty($completed_events[$event->type])) {
-                            drush_log($event->body ." " . $device->provisioningPercentage . "% Complete \n", 'devshop_info');
+                            drush_log((int) $device->provisioningPercentage . "% | " . $event->body, 'devshop_info');
                             $completed_events[$event->type] = $event;
                             break;
                         }
                     }
                 }
 
-                if (count($completed_events) == count($device->provisioningEvents)) {
+                if ($device->provisioningPercentage == 100) {
                     drush_log('All events completed.', 'devshop_ok');
                     $completed = TRUE;
                 }
