@@ -25,14 +25,18 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     sleep(3);
                     $device = $service->getApi()->device()->get($service->provider_options['project'], $service->provider_server_identifier);
 
-                    drush_log('Device:', 'devshop_ok');
-                    drush_log(print_r($device), 'devshop_ok');
+//                    drush_log('Device:', 'devshop_ok');
+//                    drush_log(print_r($device, 1), 'devshop_ok');
 
                     if (!empty($device->ipAddresses)) {
-                        drush_log('IP address loaded from API: ' . implode(', ', $device->ipAddresses) . "\n", 'devshop_ok');
 
                         // Save IP addresses
-                        $task->ref->new_ip_addresses = $device->ipAddresses;
+                        foreach ($device->ipAddresses as $ip) {
+                            if ($ip->address_family == 4) {
+                                drush_log('IP address loaded from API: ' . $ip->address, 'devshop_ok');
+                                $task->ref->new_ip_addresses[] = $ip->address;
+                            }
+                        }
                         $task->ref->no_verify = TRUE;
                         if (!node_save($task->ref)) {
                             return drush_set_error('AEGIR_CLOUD_ERROR', 'IP addresses were not saved!');
@@ -62,7 +66,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                 // Log if an event completed.
                 foreach ($device->provisioningEvents as $event) {
                     if (!empty($event->id) && empty($completed_events[$event->type])) {
-                        drush_log('Event Completed: ' . $event->body, 'devshop_ok');
+                        drush_log('Event Completed: ' . $event->body, 'devshop_info');
                         $completed_events[$event->type] = $event;
                         break;
                     }
