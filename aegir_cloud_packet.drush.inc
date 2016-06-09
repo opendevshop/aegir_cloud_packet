@@ -40,7 +40,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
 
                         // reload the node to check that IPs were saved.
                         $server = node_load($task->ref->nid);
-                        if (empty($task->ref->ip_addresses)) {
+                        if (empty($server->ip_addresses)) {
                             return drush_set_error('AEGIR_CLOUD_ERROR', 'IP addresses were not saved!');
                         }
                         break;
@@ -71,6 +71,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     foreach ($device->provisioningEvents as $event) {
                         if (!empty($event->id) && empty($completed_events[$event->type])) {
                             drush_log('Event Completed: ' . $event->body . "\n", 'devshop_info');
+                            drush_log($device->percentageComplete . "% complete. \n", 'devshop_info');
                             $completed_events[$event->type] = $event;
                             break;
                         }
