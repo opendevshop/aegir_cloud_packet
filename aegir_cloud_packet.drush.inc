@@ -16,7 +16,7 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
 
 
             if (empty($task->ref->ip_addresses)) {
-    
+
                 drush_log('Acquiring IP Addresses', 'devshop_command');
                 drush_log("Waiting for IP Address...\n", 'devshop_info');
 
@@ -44,6 +44,31 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
                     }
                 }
             }
+
+            // Loop until we have completed all provisioning steps.
+            drush_log('Waiting for Server', 'devshop_command');
+            $not_completed = TRUE;
+            $last_percentage = 0;
+            $completed_events = [];
+            while ($not_completed) {
+                sleep(3);
+                $device = $service->getApi()->device()->get($service->provider_options['project'], $service->provider_server_identifier);
+
+                // Log if the percentage changed.
+                if ($last_percentage != $device->percentageComplete) {
+                  drush_log('Server Provisioning ' . (int) $device->percentageComplete . '% complete', 'devshop_ok');
+                }
+
+                // Log if an event completed.
+                foreach ($device->provisioningEvents as $event) {
+                    if (!empty($event->id) && empty($completed_events[$event->type])) {
+                        drush_log('Event Completed: ' . $event->body, 'devshop_ok');
+                        $completed_events[$event->type] = $event;
+                        break;
+                    }
+                }
+            }
+
 
         } catch (Exception $e) {
             drush_set_error('AEGIR_CLOUD_ERROR', $e->getMessage());
