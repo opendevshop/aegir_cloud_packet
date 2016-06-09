@@ -34,7 +34,6 @@ class hostingService_provider_packet extends hostingService_provider {
     // Don't allow editing.
     if (!$this->server->nid) {
       $options = variable_get('aegir_cloud_packet_options', array());
-      dsm($options);
 
       $form['provider_options'] = array();
       $form['provider_options']['project'] = array(
