@@ -49,25 +49,32 @@ function drush_aegir_cloud_packet_pre_hosting_task() {
 
             // Loop until we have completed all provisioning steps.
             drush_log('Waiting for Server', 'devshop_command');
-            $not_completed = TRUE;
+            $completed = FALSE;
             $last_percentage = 0;
             $completed_events = [];
-            while ($not_completed) {
+            while (!$completed) {
                 sleep(3);
                 $device = $service->getApi()->device()->get($service->provider_options['project'], $service->provider_server_identifier);
 
                 // Log if the percentage changed.
                 if ($last_percentage != $device->percentageComplete) {
-                  drush_log('Server Provisioning ' . (int) $device->percentageComplete . '% complete', 'devshop_ok');
+                  drush_log('Server Provisioning ' . (int) $device->percentageComplete . '% complete', 'devshop_info');
                 }
 
                 // Log if an event completed.
-                foreach ($device->provisioningEvents as $event) {
-                    if (!empty($event->id) && empty($completed_events[$event->type])) {
-                        drush_log('Event Completed: ' . $event->body, 'devshop_info');
-                        $completed_events[$event->type] = $event;
-                        break;
+                if (isset($device->provisioningEvents )) {
+                    foreach ($device->provisioningEvents as $event) {
+                        if (!empty($event->id) && empty($completed_events[$event->type])) {
+                            drush_log('Event Completed: ' . $event->body, 'devshop_info');
+                            $completed_events[$event->type] = $event;
+                            break;
+                        }
                     }
+                }
+
+                if (count($completed_events) == count($device->provisioningEvents)) {
+                    drush_log('All events completed.', 'devshop_ok');
+                    $completed = TRUE;
                 }
             }
 
