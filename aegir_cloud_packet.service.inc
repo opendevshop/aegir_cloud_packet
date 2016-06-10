@@ -15,6 +15,15 @@ class hostingService_provider_packet extends hostingService_provider {
    * @var string
    */
   public $name = 'Packet.net';
+  public $provider_server_url = 'https://app.packet.net/portal#/project/%project_id%/server/%server_id%/overview';
+
+  public function getProviderServerUrl() {
+    return strtr($this->provider_server_url, array(
+      '%server_id%' => $this->provider_server_identifier,
+      '%project_id%' => $this->provider_options['project'],
+    ));
+  }
+
 
   function form(&$form) {
 
@@ -98,6 +107,7 @@ class hostingService_provider_packet extends hostingService_provider {
         $device->facility = $service_data['facility'];
         $device->plan = $service_data['plan'];
         $device->operatingSystem = $service_data['os'];
+        $device->sshKeys = $service_data['ssh_keys'];
 
         $provider_data = $this->getApi()->device()->create($service_data['project'], $device);
 
