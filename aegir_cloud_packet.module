@@ -63,7 +63,6 @@ function aegir_cloud_packet_form_aegir_cloud_settings_form_alter(&$form, &$form_
       $key_vars['key'] = (object) sshkey_parse(variable_get('aegir_public_key', ''));
 
       $fingerprint = theme_sshkey_fingerprint($key_vars);
-      dsm($keys);
       foreach ($keys as $key) {
         if ($fingerprint == $key->fingerprint) {
           $key_found = TRUE;
